@@ -1,0 +1,84 @@
+procotol: &procotol http
+host: &host storage.noteach.com.cn
+useragent: &agent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36
+feature: 登录功能模块的相关验证
+login:
+  run:
+  story: 登录
+#  case的描述/目的
+  description:
+    - 验证正常登录
+    - 验证正常登录的response数据覆盖
+#  设置request_param 下的params 是params 还是data
+  params_type: params
+  host: *host
+  path: /passport/v5/login/username
+  request_param: &req_param
+    url: $url
+    method: post
+    headers:
+      Content-Type: application/x-www-form-urlencoded
+      User-Agent: *agent
+    params: &loginparams
+      username: 13718620015
+      password: admin123
+      platform: web
+      clientinfo: ~
+      pid: &pid CZWlTE4lVgz9
+#  请求参数
+  request_params:
+    - <<: *req_param
+    - <<: *req_param
+
+#  响应结果的处理
+  response:
+#    要保存的文件路径(含文件名称),当值为online时表示使用setattr和getattr来获取相关的数据。
+    - filepath: 0015.json
+      # 要提取响应结果的哪些值，这些要使用jsonpath表达式。
+      resp_keys: [ $.auth_token ]
+      # 响应结果提示的字段值在保存时对应的key
+      keys: [ auth_token_0015 ]
+    - filepath: 0016.json
+      resp_keys: [ $.auth_token ]
+      keys: [ token_0016 ]
+#  数据依赖的处理
+  depends_on: ~
+#  断言
+  assert:
+#    一个case里的多重断言
+    - [pytest.assume(200==req.status_code),
+       "pytest.assume('奥林匹克化学学校' in (jsonpath(req_json,'$.schoolname')))"]
+#    - pytest.assume('奥林匹克化学学校' in (jsonpath(req_json,'$.schoolname')))
+    - pytest.assume(200==req.status_code)
+
+# 检查登录状态
+checklogin:
+  run:
+  story: 登录
+  description: ["校验登录状态--重复登录下的token覆盖"]
+  params_type: params
+  host: *host
+  path: /passport/v5/login/check
+  request_param: &req_param1
+    url: $url
+    method: get
+    headers:
+      User-Agent: *agent
+      Authorization: Bearer $token
+    params:
+      pid: *pid
+  request_params:
+    - <<: *req_param1
+  response: ~
+  depends_on:
+#    online: 默认为true，当炎False时，表示要读取文件。online 使用 getattr来获取相应的值。
+#    当使用在线模式时，case_id 表示的是哪个类(默认为Depend类)，此时的depend_key表示是哪个key
+#    当online为False时，depned_key的值为jsonpath表达式。
+    - online: false
+      type: response
+      case_id: 0016.json
+      depend_key: [ token_0016 ]
+      replace_key: [token]
+  assert:
+    - pytest.assume(200==req.status_code)
+

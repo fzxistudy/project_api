@@ -1,0 +1,4 @@
+/report/report/*
+/report/tmp/*
+/tmp/*
+/runlog/*.log

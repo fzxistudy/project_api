@@ -1,0 +1,35 @@
+#目录配置
+dir_conf:
+  # case 目录
+  case: case
+  # case 对应的yaml文件所在的目录
+  caseyml: caseyml
+  # common 目录名称
+  common: common
+  #config 目录名称
+  config: config
+#  report 临时目录名称
+  report_tmp: report/tmp
+#  report 的最终目录
+  report: report/report
+#  case的yaml文件进行处理后保存的目录名称
+  requestdata: request_data
+#  保存request请求的响应结果的目录名称
+  responsedata: response_data
+#  运行时日志保存所在的目录名称。
+  runlog: runlog
+
+# http请求相关的配置
+http_conf:
+#  协议
+  procotol: http
+#  测试环境的域名
+  host_test: &host_test storage.noteach.com.cn
+#  灰度环境的域名
+  host_dev: &host_dev storage.noteach.com.cn
+#  生产环境的域名
+  host_prod: &host_prod storage.noteach.com.cn
+#  访问的域名
+  host: *host_test
+#  接口请求中的User-Agent的配置
+  useragent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36
