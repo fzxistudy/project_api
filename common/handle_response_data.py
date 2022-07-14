@@ -9,16 +9,14 @@ from jsonpath import jsonpath
 import simplejson
 
 from common.online_data import OnlineData
-# from common.get_config_data import GetConfData
 from common.get_json_filepath import get_json_filepath
 
-# def handle_response_data(response_yml_data:list,response_json_data:dict,conf_yml_data:GetConfData,online_data:object=None)->None:
-def handle_response_data(response_yml_data:list,response_json_data:dict,conf_yml_data,online_data:object=None)->None:
+def handle_response_data(response_yml_data:list,response_json_data:dict,online_data:object=None)->None:
     '''
     处理响应结果。需要传入case 对应的yml文件中的response模块下的数据、request的请求响应json结果、config.yml 数据 \n
     :param response_yml_data: case对应的yml文件中的response模块下的数据
     :param response_json_data: request的请求响应json结果
-    :param conf_yml_data: config.yml 数据
+    # :param conf_yml_data: config.yml 数据
     :param online_data: OnlineData class 暂时不用
     :return: None
     '''
@@ -42,7 +40,7 @@ def handle_response_data(response_yml_data:list,response_json_data:dict,conf_yml
         # 表示要将结果保存到json文件中
         else:
             # 此时要拼接json文件的路径。在拼接之前要校验是否以".json" 结尾 ，以及是否以 "\" 或 "/" 开头
-            fp = get_json_filepath(fp,conf_yml_data)
+            fp = get_json_filepath(fp)
 
             save_data = {save_key[i]: save_data_list[i] for i in range(len(save_key))}
 

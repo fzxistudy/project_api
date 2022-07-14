@@ -12,7 +12,7 @@ import pytest
 import yaml
 from common.get_config_data import GetConfData
 
-confdata = GetConfData()
+confdata = GetConfData.get_instance()
 
 def get_ymlfile_data()->list:
     '''

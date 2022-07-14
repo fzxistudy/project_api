@@ -20,13 +20,13 @@ class TestDemo():
             allure.dynamic.feature(feature)
 
     @pytest.mark.parametrize("req_params,desc,asert,resp,depend,run,story",get_params(ymldata,'login'))
-    def test_login(self,req_params,desc,asert,resp,depend,run,story,get_confdata):
-        api_base = ApiBase(req_params,desc,asert,resp,depend,run,story,get_confdata)
+    def test_login(self,req_params,desc,asert,resp,depend,run,story):
+        api_base = ApiBase.get_instance(req_params,desc,asert,resp,depend,run,story)
         api_base.run_case()
 
     @pytest.mark.parametrize("req_params,desc,asert,resp,depend,run,story", get_params(ymldata, 'checklogin'))
-    def test_checklogin(self, req_params, desc, asert, resp, depend, run, story, get_confdata):
-        api_base = ApiBase(req_params, desc, asert, resp, depend, run, story, get_confdata)
+    def test_checklogin(self, req_params, desc, asert, resp, depend, run, story):
+        api_base = ApiBase.get_instance(req_params, desc, asert, resp, depend, run, story)
         api_base.run_case()
 
 

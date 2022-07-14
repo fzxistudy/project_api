@@ -7,13 +7,19 @@
 """
 import os
 import logging
+from common.get_config_data import GetConfData
+from common.get_datetime import GetDateTime
 
+
+confdata = GetConfData.get_instance()
+dt = GetDateTime()
+curdate = dt.get_curdate()
+runlog_dir = confdata.get_runlog_dir_path()
 # 设置log日志文件名称
-log_name = f"api_run_.log"
+log_name = f"api_run_{curdate}.log"
 # 拼接日志路径
-# log_path = os.path.join(runlog_dir,log_name)
-log_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),"../runlog")
-log_path = os.path.join(log_path,log_name)
+log_path = os.path.join(runlog_dir,log_name)
+
 # 实例化loggerr对象
 logger = logging.getLogger(__name__)
 

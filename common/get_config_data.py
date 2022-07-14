@@ -6,6 +6,8 @@
 @File：get_config_data.py
 """
 import os,yaml
+from threading import RLock
+
 cur_path = os.path.dirname(os.path.realpath(__file__))
 proj_path = os.path.dirname(cur_path)
 
@@ -15,8 +17,22 @@ class GetConfData():
     '''
     获取配置文件数据，对各自的路径进行拼接。
     '''
+    __instance_lock = RLock()
+    __instance = None
 
-    def __init__(self):
+    def __new__(cls, *args, **kwargs):
+        raise ImportError("不允许进行实例化")
+
+    @classmethod
+    def get_instance(cls):
+        with cls.__instance_lock:
+            if cls.__instance == None:
+                cls.__instance = super().__new__(cls)
+
+        cls.__instance.__init()
+        return cls.__instance
+
+    def __init(self):
         self.__mapping = ConfYmlMapping()
         self.__yml = "config/config.yml"
         self.__conf_yml_fp = os.path.join(proj_path,self.__yml)

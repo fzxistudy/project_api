@@ -6,6 +6,7 @@
 @File：api_base.py
 """
 import inspect
+from threading import RLock
 
 from common.api_all_pub_pkg import *
 from common.step_msg import step_msg
@@ -18,7 +19,21 @@ from common.save_log import logger
 class ApiBase():
     ''''''
 
-    def __init__(self,req_params,desc,asert,resp,dependdata,run,stroy,confdata):
+    __instance_lock = RLock()
+    __instance = None
+
+    def __new__(cls, *args, **kwargs):
+        raise ImportError("不允许实例化")
+
+    @classmethod
+    def get_instance(cls,req_params,desc,asert,resp,dependdata,run,stroy):
+        with cls.__instance_lock:
+            if cls.__instance == None:
+                cls.__instance = super().__new__(cls)
+        cls.__instance.__init(req_params,desc,asert,resp,dependdata,run,stroy)
+        return cls.__instance
+
+    def __init(self,req_params,desc,asert,resp,dependdata,run,stroy):
         '''
         初始化时需要传入的参数  \n
         :param req_params: 请求参数
@@ -28,7 +43,7 @@ class ApiBase():
         :param dependdata: 依赖的数据
         :param run: 是否运行
         :param stroy: 功能模块
-        :param confdata: config.yml 数据
+        # :param confdata: config.yml 数据
         '''
         self.__run = run
         if self.__run == False:
@@ -40,7 +55,6 @@ class ApiBase():
         self.__resp = resp
         self.__depend_data = dependdata
         self.__story = stroy
-        self.__confdata = confdata
 
     def run_case(self):
         ''''''
@@ -59,7 +73,7 @@ class ApiBase():
         """)
 
         msg = f"第一步：处理数据依赖"
-        req_params = handle_depend_data(self.__req_params,self.__depend_data,self.__confdata)
+        req_params = handle_depend_data(self.__req_params,self.__depend_data)
         step_msg(msg)
 
         msg = f"第二步：进行接口请求，参数为{req_params}"
@@ -70,7 +84,7 @@ class ApiBase():
         step_msg(msg)
 
         msg = f"第四步：处理响应结果"
-        handle_response_data(self.__resp,req.json(),self.__confdata)
+        handle_response_data(self.__resp,req.json())
         step_msg(msg)
 
         exp_str = handle_assert_exp(req,self.__asert)
@@ -101,7 +115,7 @@ class ApiBase():
         """)
 
         msg = f"第一步：处理数据依赖"
-        req_params = handle_depend_data(self.__req_params, self.__depend_data, self.__confdata)
+        req_params = handle_depend_data(self.__req_params, self.__depend_data)
         logmsg = f"{__log_fmt}{msg}"
         logger.info(logmsg)
         step_msg(msg)
@@ -118,7 +132,7 @@ class ApiBase():
         logger.info(logmsg)
 
         msg = f"第四步：处理响应结果"
-        handle_response_data(self.__resp, req.json(), self.__confdata)
+        handle_response_data(self.__resp, req.json())
         step_msg(msg)
         logmsg = f"{__log_fmt}{msg}"
         logger.info(logmsg)

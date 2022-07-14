@@ -19,14 +19,20 @@ class TestDemo1():
             allure.dynamic.feature(feature)
 
     @pytest.mark.parametrize("req_params,desc,asert,resp,depend,run,story",get_params(ymldata,'login'))
-    def test_login(self,req_params,desc,asert,resp,depend,run,story,get_confdata):
-        api_base = ApiBase(req_params,desc,asert,resp,depend,run,story,get_confdata)
+    def test_login(self,req_params,desc,asert,resp,depend,run,story):
+        api_base = ApiBase.get_instance(req_params,desc,asert,resp,depend,run,story)
+        # 运行case，调用有日志的，不建议调用此方法，因为生成的日志，会在报告中再展示一次。
+        # 建议调用 run_case()即可。
         api_base.run_case()
+        # api_base.run_case_havelog()
 
     @pytest.mark.parametrize("req_params,desc,asert,resp,depend,run,story", get_params(ymldata, 'checklogin'))
-    def test_checklogin(self, req_params, desc, asert, resp, depend, run, story, get_confdata):
-        api_base = ApiBase(req_params, desc, asert, resp, depend, run, story, get_confdata)
+    def test_checklogin(self, req_params, desc, asert, resp, depend, run, story):
+        api_base = ApiBase.get_instance(req_params, desc, asert, resp, depend, run, story)
+        # 运行case，调用有日志的，不建议调用此方法，因为生成的日志，会在报告中再展示一次。
+        # 建议调用 run_case()即可。
         api_base.run_case()
+        # api_base.run_case_havelog()
 
 
 

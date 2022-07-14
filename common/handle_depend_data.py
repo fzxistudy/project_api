@@ -9,16 +9,14 @@ from string import Template
 import simplejson
 from jsonpath import jsonpath
 from common.online_data import OnlineData
-# from common.get_config_data import GetConfData
 from common.get_json_filepath import get_json_filepath
 
-# def handle_depend_data(request_param:dict,depend_data:dict,conf_data:GetConfData=None,online_data:object=None)->dict:
-def handle_depend_data(request_param:dict,depend_data:dict,conf_data,online_data:object=None)->dict:
+def handle_depend_data(request_param:dict,depend_data:dict,online_data:object=None)->dict:
     '''
     处理依赖数据，返回处理后的请求数据。
     :param request_param: 请求参数
     :param depend_data: 依赖数据
-    :param conf_data: config.yml 的数据，暂时不做处理
+    # :param conf_data: config.yml 的数据，暂时不做处理
     :param online_data: 临时的在线数据数据class类
     :return:
     '''
@@ -70,7 +68,7 @@ def handle_depend_data(request_param:dict,depend_data:dict,conf_data,online_data
                 2：在进行路径拼接的时候，要注意 case_id的开头，是否以"/" 或 "\\" 开头
                 """
                 # 调用公共函数,对case_id的值进行校验和拼接
-                case_id = get_json_filepath(case_id,conf_data)
+                case_id = get_json_filepath(case_id)
 
                 # 读取文件
                 with open(case_id, 'r', encoding='utf8') as fp:
