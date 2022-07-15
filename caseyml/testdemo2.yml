@@ -1,0 +1,178 @@
+procotol: &procotol https
+host: &host console-v6.noteach.com.cn
+useragent: &agent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36
+feature: 精品资源
+# 功能模块标识
+module_flag: &moduleflag v5
+# v5功能模块的域名
+v5_test_host: &v5_test xxxxx
+v5_dev_host: &v5_dev xxxxx
+v5_prod_host: &v5_prod xxxxx
+# v6功能模块的域名
+v6_test_host: &v6_test xxxxx
+v6_dev_host: &v6_dev xxxxx
+v6_prod_host: &v6_prod xxxxx
+
+tree:
+  run:
+  story: 章节-树
+  module_flag: v6
+#  case的描述/目的
+  description:
+    - 验证能正确的获取物理学科的章节-树数据
+    - 验证能正确的获取化学学科的章节-树数据
+    - 验证能正确的获取生物学科的章节-树数据
+    - 验证参数值为空会报错
+    - 验证无参会报错
+#  设置request_param 下的params 是params 还是data
+  params_type: params
+  host: *host
+  path: /v1/chapter/tree
+  request_param: &req_param
+    url: $url
+    method: get
+    headers:
+      Content-Type: application/x-www-form-urlencoded
+      User-Agent: *agent
+    params: &treeparams
+      subjectId: 1
+#  请求参数
+  request_params:
+    - <<: *req_param
+    - <<: *req_param
+      params:
+        <<: *treeparams
+        subjectId: 2
+    - <<: *req_param
+      params:
+        subjectId: 3
+    - <<: *req_param
+      params:
+        subjectId:
+    - <<: *req_param
+      params:
+
+#  响应结果的处理
+  response: ~
+#  数据依赖的处理
+  depends_on: ~
+#  断言
+  assert:
+#    一个case里的多重断言
+    - [pytest.assume(200==req.status_code),'pytest.assume(["初中","高中"] == jsonpath(req_json,"$.data[:].name"))']
+    - [pytest.assume(200==req.status_code),'pytest.assume(["初中","高中"] == jsonpath(req_json,"$.data[:].name"))']
+    - [pytest.assume(200==req.status_code),'pytest.assume(["初中","高中"] == jsonpath(req_json,"$.data[:].name"))']
+    - [pytest.assume(422==req.status_code),'pytest.assume("学科ID cannot be blank" in jsonpath(req_json,"$.data[:].message")[0])']
+    - [pytest.assume(422==req.status_code),'pytest.assume("Data Validation Failed" in jsonpath(req_json,"$.message")[0])']
+
+
+knowledge:
+  run:
+  story: 知识点树
+  module_flag: v6
+  description:
+    - 验证物理学科无小学学段数据
+    - 验证物理学科能正常获取初中学段数据
+    - 验证物理学科能正常获取高中学段数据
+    - 验证化学学科无小学学段数据
+    - 验证化学学科能正常获取初中学段数据
+    - 验证化学学科能正常获取高中学段数据
+    - 验证生物学科无小学学段数据
+    - 验证生物学科能正常获取初中学段数据
+    - 验证生物学科能正常获取高中学段数据
+    - 验证学科错误学段正确时,会报错
+    - 验证学科正确学段错误时,无数据
+    - 验证学科,学段均错误时,会报错
+    - 验证无学科字段,学段正确时,会报错
+    - 验证无学段字段,学科正确时,会报错
+    - 验证无参数时,会报错
+  params_type: params
+  host: *host
+  path: /v1/knowledge-points/index
+  request_param: &knowledge_param
+    url: $url
+    method: get
+    headers:
+      User-Agent: *agent
+    params: &kl_param
+      subjectId: 1
+      gradePhase: 1
+  request_params:
+    - <<: *knowledge_param
+    - <<: *knowledge_param
+      params:
+        <<: *kl_param
+        gradePhase: 2
+    - <<: *knowledge_param
+      params:
+        <<: *kl_param
+        gradePhase: 3
+    - <<: *knowledge_param
+      params:
+        subjectId: 2
+        gradePhase: 1
+    - <<: *knowledge_param
+      params:
+        subjectId: 2
+        gradePhase: 2
+    - <<: *knowledge_param
+      params:
+        subjectId: 2
+        gradePhase: 3
+    - <<: *knowledge_param
+      params:
+        subjectId: 3
+        gradePhase: 1
+    - <<: *knowledge_param
+      params:
+        subjectId: 3
+        gradePhase: 2
+    - <<: *knowledge_param
+      params:
+        subjectId: 3
+        gradePhase: 3
+    - <<: *knowledge_param
+      params:
+        subjectId: 0
+        gradePhase: 3
+    - <<: *knowledge_param
+      params:
+        subjectId: 2
+        gradePhase: 0
+    - <<: *knowledge_param
+      params:
+        subjectId: 0
+        gradePhase: 0
+    - <<: *knowledge_param
+      params:
+        gradePhase: 2
+    - <<: *knowledge_param
+      params:
+        subjectId: 2
+    - <<: *knowledge_param
+      params: ~
+
+  response: ~
+  depends_on: ~
+  assert:
+    - [ pytest.assume(200==req.status_code), 'pytest.assume([] == jsonpath(req_json,"$.data")[0])']
+    - [ pytest.assume(200==req.status_code), 'pytest.assume(1 in jsonpath(req_json, "$.data[:].subject_id"))']
+    - [ pytest.assume(200==req.status_code), 'pytest.assume(1 in jsonpath(req_json, "$.data[:].subject_id"))']
+    - [ pytest.assume(200==req.status_code), 'pytest.assume([] == jsonpath(req_json,"$.data")[0])']
+    - [ pytest.assume(200==req.status_code), 'pytest.assume(2 in jsonpath(req_json, "$.data[:].subject_id"))']
+    - [ pytest.assume(200==req.status_code), 'pytest.assume(2 in jsonpath(req_json, "$.data[:].subject_id"))']
+    - [ pytest.assume(200==req.status_code), 'pytest.assume([] == jsonpath(req_json,"$.data")[0])']
+    - [ pytest.assume(200==req.status_code), 'pytest.assume(2 in jsonpath(req_json, "$.data[:].grade_phase"))']
+    - [ pytest.assume(200==req.status_code), 'pytest.assume(3 in jsonpath(req_json, "$.data[:].grade_phase"))']
+    - [ pytest.assume(422==req.status_code), 'pytest.assume("Data Validation Failed" in jsonpath(req_json, "$.message")[0])',
+        'pytest.assume("学科ID is invalid" in jsonpath(req_json, "$.data[:].message")[0])']
+    - [ pytest.assume(200==req.status_code), 'pytest.assume([] == jsonpath(req_json,"$.data")[0])']
+    - [ pytest.assume(422==req.status_code), 'pytest.assume("Data Validation Failed" in jsonpath(req_json, "$.message")[0])',
+        'pytest.assume("学科ID is invalid" in jsonpath(req_json, "$.data[:].message")[0])']
+    - [ pytest.assume(422==req.status_code), 'pytest.assume("Data Validation Failed" in jsonpath(req_json, "$.message")[0])',
+        'pytest.assume("学科ID cannot be blank" in jsonpath(req_json, "$.data[:].message")[0])']
+    - [ pytest.assume(422==req.status_code), 'pytest.assume("Data Validation Failed" in jsonpath(req_json, "$.message")[0])',
+        'pytest.assume("学段 cannot be blank" in jsonpath(req_json, "$.data[:].message")[0])']
+    - [ pytest.assume(422==req.status_code), 'pytest.assume("Data Validation Failed" in jsonpath(req_json, "$.message")[0])',
+        'pytest.assume("学段 cannot be blank" in jsonpath(req_json, "$.data[1].message")[0])',
+        'pytest.assume("学科ID cannot be blank" in jsonpath(req_json, "$.data[:].message")[0])']
