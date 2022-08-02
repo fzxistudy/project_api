@@ -51,9 +51,11 @@ def get_yml_fp(pyname:str,suffix:str='.yml')->str:
     :return: 拼接后的yml文件(含路径)
     '''
     if suffix == ".yaml":
-        yml_name = f"{pyname.rstrip('.py')}.yaml"
+        # 更稳妥的做法是使用正则替换,此时由于文件的后缀不存在多种情况,所以可以忽略
+        yml_name = pyname.replace('.py',suffix)
     else:
-        yml_name = f"{pyname.rstrip('.py')}.yml"
+        # 更稳妥的做法是使用正则替换,此时由于文件的后缀不存在多种情况,所以可以忽略
+        yml_name = pyname.replace('.py','.yml')
     # 获取caseyml的目录路径
     caseyml_dir = confdata.get_caseyml_dir_path()
     # 拼接文件路径

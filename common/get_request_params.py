@@ -43,18 +43,42 @@ class GetReqParams():
         # 获取case对应的yaml数据
         casedata: dict = ymldata.get(caseymlname)
         path = casedata['path']
-        procotol = ymldata.get('procotol')
-        host = ymldata.get('host')
+        # 全局procotol
+        g_procotol = ymldata.get('procotol')
+        # 全局host
+        g_host = ymldata.get('host')
+        # case 自己的host与procotol
+        m_host = casedata.get('host')
+        m_procotol = casedata.get('procotol')
+
         run = True
         story = ymldata.get('story')
         if ymldata.get('run') == False:
             run = False
 
-        if host==None or host == "":
-            host="$host"
+        # 判断模块自己的host与procotol
+        # 当模块自己的host为空或None时，使用全局的。暂不考虑使用全局进行替换
+        host = m_host
+        procotol = m_procotol
+        if m_host == None or m_host == "":
+            # 判断全局的host是否也为空
+            if g_host == None or g_host == "":
+                host = "$host"
+            else:
+                host = g_host
 
-        if procotol == None or procotol == "":
-            procotol = "$procotol"
+        if m_procotol == None or m_procotol == "":
+            if g_procotol == None or g_procotol == "":
+                procotol = "$procotol"
+            else:
+                procotol = g_procotol
+
+        # if host==None or host == "":
+        #     host="$host"
+        #
+        # if procotol == None or procotol == "":
+        #     procotol = "$procotol"
+
         # 这里使用模板技术，方便从config.yml 文件中读取host和procotol进行替换。
         '''
         1：这里需要注意及确认的是：是每个模块的host 都是一样的，还是说不同的模块的host都不一样？需要找恩强确认
@@ -143,8 +167,13 @@ def get_params(ymldata: dict, caseymlname: str) -> list:
     # 获取case对应的yaml数据
     casedata: dict = ymldata.get(caseymlname)
     path = casedata['path']
-    procotol = ymldata.get('procotol')
-    host = ymldata.get('host')
+    # 全局procotol
+    g_procotol = ymldata.get('procotol')
+    # 全局host
+    g_host = ymldata.get('host')
+    # case 自己的host与procotol
+    m_host = casedata.get('host')
+    m_procotol = casedata.get('procotol')
     run = True
     story = casedata.get('story')
     if casedata.get('run') == False:
@@ -153,11 +182,29 @@ def get_params(ymldata: dict, caseymlname: str) -> list:
     # print(f"{'*'*20}run : {run}")
     # print(f"{'*'*20}story : {story}")
 
-    if host == None or host == "":
-        host = "$host"
+    # 判断模块自己的host与procotol
+    # 当模块自己的host为空或None时，使用全局的。暂不考虑使用全局进行替换
+    host = m_host
+    procotol = m_procotol
+    if m_host == None or m_host == "":
+        # 判断全局的host是否也为空
+        if g_host == None or g_host == "":
+            host = "$host"
+        else:
+            host = g_host
 
-    if procotol == None or procotol == "":
-        procotol = "$procotol"
+    if m_procotol == None or m_procotol == "":
+        if g_procotol == None or g_procotol == "":
+            procotol = "$procotol"
+        else:
+            procotol = g_procotol
+
+    # if host == None or host == "":
+    #     host = "$host"
+    #
+    # if procotol == None or procotol == "":
+    #     procotol = "$procotol"
+    
     # 这里使用模板技术，方便从config.yml 文件中读取host和procotol进行替换。
     '''
     1：这里需要注意及确认的是：是每个模块的host 都是一样的，还是说不同的模块的host都不一样？需要找恩强确认
