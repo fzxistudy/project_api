@@ -1,0 +1,251 @@
+procotol: &procotol https
+host: &host console-v6.noteach.com.cn
+useragent: &agent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36
+feature: 精品资源
+# 功能模块标识
+module_flag: &moduleflag v5
+# v5功能模块的域名
+v5_test_host: &v5_test xxxxx
+v5_dev_host: &v5_dev xxxxx
+v5_prod_host: &v5_prod xxxxx
+# v6功能模块的域名
+v6_test_host: &v6_test xxxxx
+v6_dev_host: &v6_dev xxxxx
+v6_prod_host: &v6_prod xxxxx
+
+list:
+  run:
+  story: 列表
+  module_flag: v6
+#  case的描述/目的
+  description:
+    - 验证物理学科能正常获取小学学段数据
+    - 验证物理学科能正常获取初中学段数据
+    - 验证物理学科能正常获取高中学段数据
+    - 验证化学学科能正常获取小学学段数据
+    - 验证化学学科能正常获取初中学段数据
+    - 验证化学学科能正常获取高中学段数据
+#  设置request_param 下的params 是params 还是data
+  params_type: params
+  host: *host
+  path: /v1/resource/index
+  request_param: &list_params
+    url: $url
+    method: get
+    headers:
+      User-Agent: *agent
+    params: &ListParams
+      subjectId: 1
+      gradePhase: 1
+      versionId: 1
+      dataVersion: 1
+#  请求参数
+  request_params:
+    - <<: *list_params
+    - <<: *list_params
+      params:
+        <<: *ListParams
+        gradePhase: 2
+    - <<: *list_params
+      params:
+        <<: *ListParams
+        gradePhase: 3
+    - <<: *list_params
+      params:
+        <<: *ListParams
+        subjectId: 2
+        gradePhase: 1
+    - <<: *list_params
+      params:
+        <<: *ListParams
+        subjectId: 2
+        gradePhase: 2
+    - <<: *list_params
+      params:
+        <<: *ListParams
+        subjectId: 2
+        gradePhase: 3
+#  响应结果的处理
+  response: ~
+#  数据依赖的处理
+  depends_on: ~
+#  断言
+  assert:
+#    一个case里的多重断言
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+
+
+category:
+  run:
+  story: 类别
+  module_flag: v6
+#  case的描述/目的
+  description:
+    - 验证物理学科能正常获取小学学段数据
+    - 验证物理学科能正常获取初中学段数据
+    - 验证物理学科能正常获取高中学段数据
+    - 验证化学学科能正常获取小学学段数据
+    - 验证化学学科能正常获取初中学段数据
+    - 验证化学学科能正常获取高中学段数据
+#  设置request_param 下的params 是params 还是data
+  params_type: params
+  host: *host
+  path: /v1/resource/category
+  request_param: &category_params
+    url: $url
+    method: get
+    headers:
+      User-Agent: *agent
+    params: &CategoryParams
+      subjectId: 1
+      gradePhase: 1
+#  请求参数
+  request_params:
+    - <<: *category_params
+    - <<: *category_params
+      params:
+        <<: *CategoryParams
+        gradePhase: 2
+    - <<: *category_params
+      params:
+        <<: *CategoryParams
+        gradePhase: 3
+    - <<: *category_params
+      params:
+        subjectId: 2
+        gradePhase: 1
+    - <<: *category_params
+      params:
+        subjectId: 2
+        gradePhase: 2
+    - <<: *category_params
+      params:
+        subjectId: 2
+        gradePhase: 3
+#  响应结果的处理
+  response: ~
+#  数据依赖的处理
+  depends_on: ~
+#  断言
+  assert:
+#    一个case里的多重断言
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+
+
+detail:
+  run:
+  story: 资源详情
+  module_flag: v6
+#  case的描述/目的
+  description:
+    - 验证能正确获取资源详情
+    - 验证不能正确获取资源详情
+#  设置request_param 下的params 是params 还是data
+  params_type: params
+  host: *host
+  path: /v1/resource/info
+  request_param: &detail_params
+    url: $url
+    method: get
+    headers:
+      User-Agent: *agent
+    params: &DetailParams
+      id: 2128
+#  请求参数
+  request_params:
+    - <<: *detail_params
+    - <<: *detail_params
+      params:
+        <<: *DetailParams
+        id: -1
+#  响应结果的处理
+  response: ~
+#  数据依赖的处理
+  depends_on: ~
+#  断言
+  assert:
+#    一个case里的多重断言
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+
+
+recommend:
+  run:
+  story: 推荐
+  module_flag: v6
+#  case的描述/目的
+  description:
+    - 验证小学物理的推荐资源为空
+    - 验证能正常获取初中物理的推荐资源
+    - 验证能正常获取高中物理的推荐资源
+    - 验证小学化学的推荐资源为空
+    - 验证能正常获取初中化学的推荐资源
+    - 验证能正常获取高中化学的推荐资源
+#  设置request_param 下的params 是params 还是data
+  params_type: params
+  host: *host
+  path: /v1/resource/recommend
+  request_param: &recommend_params
+    url: $url
+    method: get
+    headers:
+      User-Agent: *agent
+    params: &RecommendParams
+      id: 1
+      subjectId: 1
+      gradePhase: 1
+      versionId: ~
+      textbookId: ~
+      chapterId: ~
+      dataVersion: ~
+#  请求参数
+  request_params:
+    - <<: *recommend_params
+    - <<: *recommend_params
+      params:
+        <<: *RecommendParams
+        subjectId: 1
+        gradePhase: 2
+    - <<: *recommend_params
+      params:
+        <<: *RecommendParams
+        subjectId: 1
+        gradePhase: 3
+    - <<: *recommend_params
+      params:
+        <<: *RecommendParams
+        subjectId: 2
+        gradePhase: 1
+    - <<: *recommend_params
+      params:
+        <<: *RecommendParams
+        subjectId: 2
+        gradePhase: 2
+    - <<: *recommend_params
+      params:
+        <<: *RecommendParams
+        subjectId: 2
+        gradePhase: 3
+#  响应结果的处理
+  response: ~
+#  数据依赖的处理
+  depends_on: ~
+#  断言
+  assert:
+#    一个case里的多重断言
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]
+    - [pytest.assume(200==req.status_code)]

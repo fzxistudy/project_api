@@ -1,0 +1,64 @@
+procotol: &procotol https
+host: &host console-v6.noteach.com.cn
+useragent: &agent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36
+feature: 评论
+# 功能模块标识
+module_flag: &moduleflag v5
+# v5功能模块的域名
+v5_test_host: &v5_test xxxxx
+v5_dev_host: &v5_dev xxxxx
+v5_prod_host: &v5_prod xxxxx
+# v6功能模块的域名
+v6_test_host: &v6_test xxxxx
+v6_dev_host: &v6_dev xxxxx
+v6_prod_host: &v6_prod xxxxx
+
+list:
+  run:
+  story: 评论列表
+  module_flag: v6
+#  case的描述/目的
+  description:
+    - 验证物理学科能正常获取评论列表数据
+    - 验证化学学科能正常获取评论列表数据
+    - 验证生物学科能正常获取评论列表数据
+#  设置request_param 下的params 是params 还是data
+  params_type: params
+  host: *host
+  path: /v1/resource/index
+  request_param: &list_params
+    url: $url
+    method: get
+    headers:
+      User-Agent: *agent
+    params: &ListParams
+      object_id: 164
+      object_type: wuli
+#  请求参数
+  request_params:
+    - <<: *list_params
+    - <<: *list_params
+      params:
+        object_id: 2797
+        object_type: huaxue
+    - <<: *list_params
+      params:
+        object_id: 131
+        object_type: shengwu
+#  响应结果的处理
+  response: ~
+#  数据依赖的处理
+  depends_on: ~
+#  断言
+  assert:
+#    一个case里的多重断言
+    - [pytest.assume(422==req.status_code)]
+    - [pytest.assume(422==req.status_code)]
+    - [pytest.assume(422==req.status_code)]
+
+
+
+
+
+
+
